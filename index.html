@@ -39,6 +39,8 @@ body { font-family: 'Geist', system-ui, sans-serif; background: var(--bg); color
 .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
 .hero-meta-item span { font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
 .hero-meta-item strong { font-weight: 500; color: var(--text); }
+.injury-banner { background: var(--warm-light); border: 1px solid #E8C699; border-left: 3px solid var(--warm); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 13.5px; color: var(--text-2); }
+.injury-banner strong { color: var(--warm); font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
 .global-actions { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .stats-summary { font-size: 13px; color: var(--text-2); }
 .stats-summary strong { color: var(--primary-dark); }
@@ -46,6 +48,16 @@ body { font-family: 'Geist', system-ui, sans-serif; background: var(--bg); color
 .day-tab { padding: 12px 8px; background: transparent; border: none; border-radius: 7px; font-family: 'Geist', sans-serif; font-weight: 500; font-size: 13px; color: var(--text-2); cursor: pointer; transition: all 0.15s; text-align: center; }
 .day-tab:hover { color: var(--text); }
 .day-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 6px rgba(45,95,78,0.2); }
+.day-tab.injury.active { background: var(--warm); box-shadow: 0 2px 6px rgba(184,114,44,0.25); }
+.day-tab.mob.active { background: #3A5A78; box-shadow: 0 2px 6px rgba(58,90,120,0.28); }
+.check-progress { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-2); background: var(--bg-alt); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; margin-bottom: 16px; }
+.check-progress strong { color: var(--primary-dark); font-size: 14px; }
+.ex-check { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--border-strong); background: var(--surface); color: #fff; font-size: 17px; font-weight: 700; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0; }
+.ex-check:hover { border-color: var(--success); }
+.exercise-card.check.checked { border-left: 3px solid var(--success); }
+.exercise-card.check.checked .ex-check { background: var(--success); border-color: var(--success); }
+.exercise-card.check.checked .ex-name { text-decoration: line-through; color: var(--text-3); }
+.check-header .ex-title-block { cursor: pointer; }
 .day-tab small { display: block; font-family: 'Geist Mono', monospace; font-size: 9px; letter-spacing: 0.03em; opacity: 0.7; margin-top: 2px; text-transform: uppercase; }
 .day-header { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
 .day-title { font-family: 'Fraunces', serif; font-size: 23px; font-weight: 500; letter-spacing: -0.01em; }
@@ -160,6 +172,11 @@ body { font-family: 'Geist', system-ui, sans-serif; background: var(--bg); color
   </div>
 </header>
 
+<div class="injury-banner">
+  <strong>⚠ Tryb tymczasowy — kontuzja (ok. 2 tygodnie)</strong>
+  Obita lewa ręka + żebra. Na czas gojenia używaj zakładek <b>Kontuzja A / B</b> (dół ciała, bez chwytu lewą ręką i bez napięcia żeber). Zakładki Upper/Lower zostają nietknięte — wróć do nich po wizycie u fizjoterapeuty. Historia i tak się nie kasuje.
+</div>
+
 <div class="global-actions">
   <div class="stats-summary" id="statsSummary">Brak zapisanych sesji</div>
   <div style="display:flex;gap:8px;">
@@ -175,6 +192,9 @@ body { font-family: 'Geist', system-ui, sans-serif; background: var(--bg); color
   <button class="day-tab" data-day="la">Wtorek<small>Lower A · hinge + hams</small></button>
   <button class="day-tab" data-day="ub">Czwartek<small>Upper B · klatka obj. + bi</small></button>
   <button class="day-tab" data-day="lb">Piątek<small>Lower B · pośladki + quady</small></button>
+  <button class="day-tab injury" data-day="ka">Kontuzja A<small>Dół · przód uda</small></button>
+  <button class="day-tab injury" data-day="kb">Kontuzja B<small>Dół · tył uda</small></button>
+  <button class="day-tab mob" data-day="mob">Mobilność<small>Fizjo · rozciąganie</small></button>
 </div>
 
 <div id="planContent"></div>
@@ -321,6 +341,87 @@ const PLAN = {
         yt:"standing calf raise full range" }
     ],
     cooldown:"Pigeon — rozciąganie pośladka, jedna noga zgięta z przodu na macie 1 min/stronę · couch stretch — rozciąganie przodu uda w wykroku, tylna stopa na ławce 1 min/stronę · pozycja bioder 90/90 na siedząco 1 min/stronę · wisz bierny na drążku 30 s"
+  },
+  ka: {
+    nazwa:"Kontuzja A", podtytul:"Dół ciała — przód uda + pośladki (tryb tymczasowy)", czas:"~50 min",
+    priorytet: "TRYB TYMCZASOWY (kontuzja ręki/żeber, ~2 tyg.): zero chwytu i trzymania lewą ręką, zero mocnego napięcia tułowia i rotacji. Oddychaj normalnie — nie usztywniaj się na wstrzymanym oddechu. STOP przy ostrym bólu żeber przy wdechu lub bólu/drętwieniu ręki. Po wizycie u fizjo wróć do Upper/Lower.",
+    rozgrzewka:"Rower leżący 5–8 min (dłonie luźno) · pozycja bioder 90/90 ×5/stronę · hip CARs — krążenia w biodrze ×5/stronę · mostek biodrowy leżąc ×15 · marsz boczny z gumą na kostkach ×10 kroków/kierunek · przysiad z masą własnego ciała ×15",
+    cwiczenia: [
+      { id:"leg-press", nazwa:"Leg press (suwnica)", cel:{serie:4,powt:"12–15",pauza:"120 s"}, start:"kalibracja — ciężar na czyste 12–15, bez maksymalnego usztywnienia",
+        technika:["Plecy oparte, napęd stopami, dłonie tylko luźno przy uchwytach — nie pchaj rękami","Oddychaj normalnie, NIE wstrzymuj na maksa (żebra)","Zakres do komfortu kolan, kontrolowane zejście 2–3 s","Bezpieczne dla ręki i żeber — brak chwytu i mocnego bracingu"],
+        bledy:["Wstrzymywanie oddechu i mocne parcie — drażni żebra","Odrywanie bioder od siedziska w głębi"],
+        yt:"leg press proper form" },
+      { id:"seated-leg-curl", nazwa:"Seated leg curl (uginanie siedząc)", cel:{serie:3,powt:"10–12",pauza:"90 s"}, start:"kontynuacja — patrz historia",
+        technika:["Pełny zakres, kontrolowany powrót 2–3 s","Dłonie tylko spoczywają na uchwytach — bez chwytu obciążającego","Hamstring w rozciągnięciu — mocny bodziec, bezpieczny dla ręki i żeber"],
+        yt:"seated leg curl proper form" },
+      { id:"hack-squat", nazwa:"Hack squat (lub prasa)", cel:{serie:3,powt:"10–12",pauza:"120 s"}, start:"kontynuacja — patrz historia; lżej niż zwykle jeśli usztywnienie drażni żebra",
+        technika:["Bark/plecy oparte o pady, dłonie tylko dotykają uchwytów","Jeśli mocne usztywnienie boli żebra — zejdź z ciężaru albo zrób drugie podejście leg pressu","Pełny zakres do komfortu kolan","Oddychaj płynnie"],
+        yt:"hack squat depth full range" },
+      { id:"abduction-machine", nazwa:"Odwodziciele na maszynie", cel:{serie:3,powt:"12–15",pauza:"60 s"}, start:"kontynuacja — patrz historia",
+        technika:["Pełne odwiedzenie, 1 s spięcia, kontrola w powrocie","Dłonie swobodne — zero udziału ręki","Pośladek średni: pomaga też Twojemu punktowi napięcia w biodrze"],
+        yt:"hip abduction machine glute medius" },
+      { id:"calves", nazwa:"Wspięcia na palce (maszyna z padem na barkach)", cel:{serie:3,powt:"12–15",pauza:"60 s"}, start:"kontynuacja — patrz historia",
+        technika:["Wersja z poduszką na barkach lub w suwnicy — bez trzymania ciężaru w dłoni","Pełny zakres, 2 s pauzy w rozciągnięciu na dole","Bez odbijania"],
+        yt:"standing calf raise machine form" }
+    ],
+    cooldown:"Pigeon — rozciąganie pośladka 1 min/stronę · couch stretch — przód uda 1 min/stronę · pozycja bioder 90/90 na siedząco 1 min/stronę (bez wisu na drążku — chwyt drażni rękę)"
+  },
+  kb: {
+    nazwa:"Kontuzja B", podtytul:"Dół ciała — tył uda + pośladki (tryb tymczasowy)", czas:"~50 min",
+    priorytet: "TRYB TYMCZASOWY (kontuzja ręki/żeber, ~2 tyg.): wszystko na maszynach i wyciągu, zero chwytu lewą ręką, zero rotacji i mocnego bracingu. Kickback z manżetą na kostce — ręka poza ruchem. STOP przy bólu żeber przy oddechu lub bólu/drętwieniu ręki.",
+    rozgrzewka:"Rower leżący 5–8 min (dłonie luźno) · pozycja bioder 90/90 ×5/stronę · hip CARs ×5/stronę · mostek biodrowy leżąc ×15 · marsz boczny z gumą na kostkach ×10 kroków/kierunek",
+    cwiczenia: [
+      { id:"hip-thrust-machine", nazwa:"Hip thrust / glute drive na maszynie", cel:{serie:4,powt:"12–15",pauza:"120 s"}, start:"kalibracja — NIE ze sztangą (chwyt + bracing); maszyna glute drive",
+        technika:["Poduszka dociska biodra — dłonie tylko przytrzymują uchwyty bez obciążenia","Pełne wyprostowanie bioder + 1–2 s spięcia pośladków u góry","Ruch z bioder, oddychaj normalnie — żebra bez mocnego napięcia","Zamiennik hip thrustu ze sztangą na czas kontuzji"],
+        bledy:["Wypychanie z lędźwi zamiast z bioder — miednica lekko podwinięta"],
+        yt:"glute drive machine hip thrust form" },
+      { id:"seated-leg-curl", nazwa:"Seated leg curl (uginanie siedząc)", cel:{serie:3,powt:"10–12",pauza:"90 s"}, start:"kontynuacja — patrz historia",
+        technika:["Pełny zakres, kontrolowany powrót 2–3 s","Dłonie luźno na uchwytach — bez chwytu obciążającego","Główny budulec tylnej taśmy na czas, gdy odpada trap bar i RDL"],
+        yt:"seated leg curl proper form" },
+      { id:"cable-kickback", nazwa:"Kickback / wyprost biodra na wyciągu (manżeta na kostce)", cel:{serie:3,powt:"12–15/nogę",pauza:"60 s"}, start:"lekko — czucie pośladka; manżeta tuż nad kostką",
+        technika:["Manżeta na kostce, linka ciągnie za nogę — ręka w ogóle nie dotyka ciężaru","Trzymasz się ramy maszyny dla równowagi (luźno, bez obciążania lewej ręki)","Wyprost biodra + spięcie pośladka, kontrola w powrocie","Ta sama manżeta: odwodzenie i przywodzenie biodra w bok"],
+        yt:"cable glute kickback ankle strap" },
+      { id:"adduction-machine", nazwa:"Przywodziciele na maszynie", cel:{serie:3,powt:"12–15",pauza:"60 s"}, start:"kontynuacja — patrz historia",
+        technika:["Pełny zakres, 1 s spięcia, kontrola w powrocie","Dłonie swobodne — zero udziału ręki"],
+        yt:"hip adduction machine form" },
+      { id:"leg-extension", nazwa:"Leg extension (prostowanie nóg)", cel:{serie:3,powt:"12–15",pauza:"60 s"}, start:"kalibracja — lekko/umiarkowanie, czucie czworogłowego",
+        technika:["Siedzenie oparte, wałek na goleniach, dłonie luźno na uchwytach","Pełny wyprost + 1 s spięcia, kontrolowany powrót","Bezpieczne dla ręki i żeber — czysta izolacja czworogłowego"],
+        yt:"leg extension proper form" }
+    ],
+    cooldown:"Pigeon — rozciąganie pośladka 1 min/stronę · couch stretch — przód uda 1 min/stronę · pozycja bioder 90/90 na siedząco 1 min/stronę · figure-4 leżąc na plecach 1 min/stronę (na Twój punkt w pośladku)"
+  },
+  mob: {
+    tryb:"checklist",
+    nazwa:"Mobilność", podtytul:"Fizjoterapia — kontrola techniki + rozciąganie (tylna taśma)", czas:"~15–20 min",
+    priorytet:"Rozpiska od fizjoterapeuty. ROZCIĄGANIE (6–12): trzymaj licząc do 10, pogłębiaj na WYDECHU, ~5 serii, na granicy — NIE w ostry ból. KONTROLA (1–5): ~8–10 powt. (dawkę potwierdź u fizjo). Codziennie lub wg zaleceń. Nic, co promieniuje do nogi.",
+    rozgrzewka:"Rozciąganie na rozgrzanym ciele (po treningu, marszu lub saunie). Lekki marsz 3–5 min jeśli na zimno.",
+    cwiczenia: [
+      { id:"fizjo-pelvic", nazwa:"1. Kontrola miednicy leżąc (podwinięcie + brzuch)", cel:{serie:3,powt:"8–10",pauza:"—"}, start:"taśma wokół nóg 90°, końce w dłoniach",
+        technika:["Na plecach, nogi ~90°, stopy w 3 punktach podparcia","Wdech; na WYDECHU podwiń miednicę, dociśnij lędźwie do podłoża (bez przestrzeni)","Łopatki ściągnięte, broda do klatki, głowa dociśnięta","Napięcie core — kontrolnie, bez ciężaru"], yt:"posterior pelvic tilt supine core bracing" },
+      { id:"fizjo-wall", nazwa:"2. Postawa przy ścianie (wall drill)", cel:{serie:3,powt:"8–10",pauza:"—"}, start:"gdy opanujesz #1",
+        technika:["To samo na stojąco przy ścianie","Nogi lekko ugięte, kolana w linii, stopy 3 punkty","Ta sama praca miednicy i łopatek"], yt:"wall posture drill neutral spine" },
+      { id:"fizjo-hinge", nazwa:"3. Hip hinge (zawias) z gumą na kolanach", cel:{serie:3,powt:"8–10",pauza:"—"}, start:"guma w napięciu → progr. kettlebell 8 kg → sztanga",
+        technika:["Nogi lekko ugięte, stopy 3 punkty, guma na kolanach (kolana rozpychają = w linii)","Wdech; na WYDECHU biodra w tył (zawias), łopatki ściągnięte, broda do szyi","Pilnuj: podparcie, kolano, linia, biodra, łopatki, głowa","Podstawa martwego ciągu — progresja przy pełnej technice"], yt:"banded hip hinge drill deadlift technique" },
+      { id:"fizjo-squat", nazwa:"4. Przysiad z gumą na kolanach (kontrola)", cel:{serie:3,powt:"8–10",pauza:"—"}, start:"guma na kolanach",
+        technika:["Jak hip hinge, ale z przysiadem","Przy wyproście zachowaj wszystkie elementy (kolana w linii, miednica, łopatki)"], yt:"banded squat knees out technique" },
+      { id:"fizjo-walk", nazwa:"5. Marsz w przysiadzie z gumą (4 kierunki)", cel:{serie:3,powt:"8–10 kroków/kier.",pauza:"—"}, start:"guma na kolanach, nisko",
+        technika:["Zejdź nisko (kolano mocno zgięte)","Idź: lewo, prawo, przód, tył","Kolana cały czas w linii — technika, nie siła"], yt:"banded monster walk squat position" },
+      { id:"fizjo-rot", nazwa:"6. Rotacyjne rozciąganie dolnego tułowia leżąc", cel:{serie:5,powt:"~10 s/stronę",pauza:"—"}, start:"na granicy, nie w ból",
+        technika:["Na plecach, kolana ~90°","Trzymając kąt, odkładasz nogi na bok (lewe kolano ku prawej stopie)","Naciąga lewy pośladek i pasmo; biodra/łopatki nieoderwane","Druga strona"], yt:"supine lower trunk rotation stretch" },
+      { id:"fizjo-ham-strap", nazwa:"7. Rozciąganie hamstringów leżąc z taśmą", cel:{serie:5,powt:"~10 s/stronę",pauza:"—"}, start:"taśma pod stopą",
+        technika:["Na plecach, jedna noga leży, druga prosta z taśmą pod stopą","Unosisz prostą nogę w górę, naciągasz hamstring","Wersja na boki: lekko na zewnątrz / do wewnątrz","Pogłębiaj na wydechu"], yt:"supine hamstring stretch with strap" },
+      { id:"fizjo-ham-table", nazwa:"8. Rozciąganie hamstringów na podwyższeniu", cel:{serie:5,powt:"~10 s/stronę",pauza:"—"}, start:"stół/pudło",
+        technika:["Jedna noga wyprostowana leży na stole, druga zwisa","Skłon głową i rękami do wyprostowanej nogi","Pogłębiaj na wydechu, licząc do 10"], yt:"table hamstring stretch one leg" },
+      { id:"fizjo-hipflex", nazwa:"9. Rozciąganie zginaczy biodra w półklęku (couch stretch)", cel:{serie:5,powt:"~10 s/stronę",pauza:"—"}, start:"wykrok 90°",
+        technika:["Klęk na jednej nodze, druga wykrok 90°","Wypad do przodu, trzymaj kąt 90°","Zaawansowana: złap tylną stopę i przyciągnij piętę do uda"], yt:"half kneeling hip flexor couch stretch" },
+      { id:"fizjo-drabinka", nazwa:"10. Rozciąganie tylnej taśmy przy drabince", cel:{serie:5,powt:"~10 s/stronę",pauza:"—"}, start:"noga na szczeblu",
+        technika:["Jedna noga oparta o szczebel drabinki","Skłon do nogi na drabince, potem do nogi stojącej"], yt:"wall bars hamstring stretch leg elevated" },
+      { id:"fizjo-twist", nazwa:"11. Skręt kręgosłupa w siadzie", cel:{serie:5,powt:"~10 s/stronę",pauza:"—"}, start:"siad",
+        technika:["Prawa noga zgięta; prawą wyprostowaną rękę przekładasz przez kolano","Lewą podpierasz się i obracasz tułów za siebie","Druga strona"], yt:"seated spinal twist stretch" },
+      { id:"fizjo-fold", nazwa:"12. Skłon w siadzie z dorsifleksją (dodatkowe)", cel:{serie:5,powt:"do 10 (liczenie)",pauza:"—"}, start:"dawka wprost od fizjoterapeuty",
+        technika:["Siad, nogi zgięte, łap rękami za stopy","Na WYDECHU zawijasz stopy do góry (palce do sufitu) i pogłębiasz skłon","Licz do 10, pogłębiaj tylko na wydechu","Na granicy — nie w ostry ból"], yt:"seated forward fold hamstring dorsiflexion stretch" }
+    ],
+    cooldown:"Spokojny oddech, rozluźnienie. Nic, co daje ból promieniujący do nogi."
   }
 };
 
@@ -397,10 +498,28 @@ function renderTracker(ex) {
 }
 
 function renderExerciseCard(ex, index) {
+  const day = PLAN[appData.currentDay];
+  const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.yt || ex.nazwa)}`;
+  const techHtml = `<div class="technique-section"><h6>Technika</h6><ol>${ex.technika.map(t=>`<li>${t}</li>`).join('')}</ol></div>
+      ${ex.bledy?`<div class="technique-section"><h6>Najczęstsze błędy</h6><ul>${ex.bledy.map(b=>`<li>${b}</li>`).join('')}</ul></div>`:''}
+      <a class="ex-yt" href="${ytUrl}" target="_blank" rel="noopener">▶ Zobacz wzorcowe wykonanie ↗</a>`;
+  // Tryb checklist (np. Mobilność) — bez trackera, tylko odhaczanie + technika
+  if (day && day.tryb === 'checklist') {
+    const done = !!(appData.checklist && appData.checklist.date===getTodayISO() && appData.checklist.done && appData.checklist.done[ex.id]);
+    return `<div class="exercise-card check ${done?'checked':''}" data-ex="${ex.id}">
+      <div class="ex-header check-header">
+        <button class="ex-check" data-check="${ex.id}" aria-label="odhacz">${done?'✓':''}</button>
+        <div class="ex-title-block" onclick="toggleExercise('${ex.id}')">
+          <div class="ex-name">${ex.nazwa}</div>
+          <div class="ex-target">${ex.cel.serie} × ${ex.cel.powt}</div></div>
+        <div class="ex-toggle" onclick="toggleExercise('${ex.id}')">▼</div>
+      </div>
+      <div class="ex-body">${techHtml}</div>
+    </div>`;
+  }
   const rec = appData.exercises[ex.id] || { sessions: [] };
   const today = getTodayISO();
   const hasToday = rec.sessions.some(s => s.date===today && (s.sets||[]).some(set => set && (set.reps!==undefined||set.weight!==undefined)));
-  const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.yt || ex.nazwa)}`;
   return `<div class="exercise-card ${hasToday?'has-data':''}" data-ex="${ex.id}">
     <div class="ex-header" onclick="toggleExercise('${ex.id}')">
       <div class="ex-num">${index}</div>
@@ -411,9 +530,7 @@ function renderExerciseCard(ex, index) {
     <div class="ex-body">
       <div class="ex-start"><strong>Start:</strong> ${ex.start}</div>
       ${renderTracker(ex)}
-      <div class="technique-section"><h6>Technika</h6><ol>${ex.technika.map(t=>`<li>${t}</li>`).join('')}</ol></div>
-      ${ex.bledy?`<div class="technique-section"><h6>Najczęstsze błędy</h6><ul>${ex.bledy.map(b=>`<li>${b}</li>`).join('')}</ul></div>`:''}
-      <a class="ex-yt" href="${ytUrl}" target="_blank" rel="noopener">▶ Zobacz wzorcowe wykonanie ↗</a>
+      ${techHtml}
     </div>
   </div>`;
 }
@@ -423,6 +540,7 @@ function renderDay(dayKey) {
   const exHtml = day.cwiczenia.map((ex,i)=> renderExerciseCard(ex, i+1)).join('');
   return `<div class="day-header"><div class="day-title"><em>${day.nazwa}</em> — ${day.podtytul}</div><div class="day-meta">${day.czas}</div></div>
     <div class="day-priority"><strong>Priorytet dnia:</strong> ${day.priorytet}</div>
+    ${day.tryb==='checklist'?'<div class="check-progress" id="checkProgress"></div>':''}
     <div class="warmup-block"><h5>Rozgrzewka + mobilność</h5><p>${day.rozgrzewka}</p></div>
     ${exHtml}
     <div class="warmup-block" style="border-left-color:var(--success);background:var(--success-light);margin-top:18px;"><h5 style="color:var(--success);">Cooldown + mobilność</h5><p>${day.cooldown}</p></div>`;
@@ -432,6 +550,7 @@ function renderPlan() {
   document.getElementById('planContent').innerHTML = renderDay(appData.currentDay);
   document.querySelectorAll('.day-tab').forEach(t => t.classList.toggle('active', t.dataset.day===appData.currentDay));
   updateStats();
+  updateCheckProgress();
 }
 
 function updateStats() {
@@ -445,6 +564,21 @@ function updateStats() {
 }
 
 function toggleExercise(id){ const c = document.querySelector(`.exercise-card[data-ex="${id}"]`); if(c) c.classList.toggle('open'); }
+
+function ensureChecklist(){ const today=getTodayISO(); if(!appData.checklist || appData.checklist.date!==today){ appData.checklist={date:today, done:{}}; } return appData.checklist; }
+function toggleCheck(id){
+  const c=ensureChecklist(); c.done[id]=!c.done[id];
+  const card=document.querySelector(`.exercise-card[data-ex="${id}"]`); const btn=document.querySelector(`.ex-check[data-check="${id}"]`);
+  if(card) card.classList.toggle('checked', c.done[id]); if(btn) btn.textContent=c.done[id]?'✓':'';
+  saveData(); updateCheckProgress();
+}
+function updateCheckProgress(){
+  const el=document.getElementById('checkProgress'); if(!el) return;
+  const day=PLAN[appData.currentDay]; if(!day || day.tryb!=='checklist') return;
+  const c=(appData.checklist && appData.checklist.date===getTodayISO()) ? appData.checklist.done : {};
+  const total=day.cwiczenia.length, done=day.cwiczenia.filter(x=>c[x.id]).length;
+  el.innerHTML = `Zrobione dziś: <strong>${done}/${total}</strong>` + (done===total?' &nbsp;✓ komplet':'');
+}
 
 function handleInput(e){
   const t = e.target;
@@ -464,6 +598,7 @@ function handleInput(e){
 }
 
 function handleClick(e){
+  const cb=e.target.closest('.ex-check'); if(cb){ toggleCheck(cb.dataset.check); return; }
   if(e.target.closest('.history-toggle')){ const b=e.target.closest('.history-toggle'); const l=document.querySelector(`[data-history="${b.dataset.ex}"]`); if(l){ b.classList.toggle('open'); l.classList.toggle('open'); } return; }
   if(e.target.classList.contains('history-delete')){ if(!confirm('Usunąć tę sesję?')) return; const rec=appData.exercises[e.target.dataset.ex]; if(rec) rec.sessions=rec.sessions.filter(s=>s.id!==e.target.dataset.sessionId); saveData(); renderPlan(); return; }
   if(e.target.dataset.action==='finish'){ const rec=appData.exercises[e.target.dataset.ex]; const today=getTodayISO(); const s=rec&&rec.sessions.find(x=>x.date===today);
